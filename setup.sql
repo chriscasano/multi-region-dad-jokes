@@ -28,4 +28,4 @@ insert into dad.jokes (joke, punchline) values ('किन कुखुरा �
 --alter table dad.jokes set locality regional by row;
 
 insert into dad.jokes (joke,punchline) values ('what do you a call bee that lives in america?','A USB');
-insert into dad.jokes (joke, punchline) values ('what do you say to the next batter?', 'europe');
+insert into dad.jokes (joke, punchline) values ('what do you say to your French friend who woke up early?', 'europe');
