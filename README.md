@@ -1,18 +1,22 @@
-# Webinar: CockroachDB Multi-Region Local Development
+# Webinar: CockroachDB Multi-Region Tutorial using `cockroach demo`
 
-A quick tutorial on how to create and develop multi-region applications on your local desktop.
+A quick tutorial on how to create, develop and test multi-region applications on your local desktop.
 
 ## Install Cockroach
 
 [Install Cockroach](https://www.cockroachlabs.com/docs/v21.1/install-cockroachdb-mac)
 
-## Create A Simulated Multi-Region on Your Laptop
+## Create A Simulated Multi-Region Cluster On Your Laptop
 
-Create a 9 node multi region cluster
+Create a 9 node multi region cluster with one command.  That's right, one command sets up and entire multi-region cluster for you to test on!
 
 ```bash
 cockroach demo --global --nodes 9 --empty
 ```
+
+Once executed, you will have a SQL command shell to work from which will connect you to node 1 in the cluster.
+
+## Explore the Cluster
 
 Open the Admin UI url that displays under "Connection Parameters" -> "(webui)".  It should look like: "http://127.0.0.1:8080/demologin?password=demo11449&username=demo"
 
@@ -51,6 +55,8 @@ Open up a new terminal and log into node 7.  We'll use this terminal later on to
 ```bash
 cockroach sql --url <node 7 (SQL) url from above>
 ```
+
+## Setup The Database
 
 Let's create a sample database called 'dad' and put some jokes in it :)  We'll also make the database multi-region.  You can do this one of two ways.  The first way is importing a SQL file like this...
 
@@ -130,15 +136,13 @@ Again, wait a few seconds for the change to happen.  You'll wow have fast, consi
 Let's do this write in US East
 
 ```sql
-insert into dad.jokes (joke,punchline)
-values ('what do you a call bee that lives in america?','A USB');
+insert into dad.jokes (joke,punchline) values ('what do you a call bee that lives in america?','A USB');
 ```
 
 And this write in Europe
 
 ```sql
-insert into dad.jokes (joke, punchline)
-values ('what do you say to your French friend who woke up early?', 'Europe!');
+insert into dad.jokes (joke, punchline) values ('what do you say to your French friend who woke up early?', 'Europe!');
 ```
 
 Notice how the latency isn't that great for writes?  Let's try one last thing.  Let's create a regional by row table.  This will automatically geo-partition the data using an invisible region column.  A region column value will be specified once the data is created in that region which will in turn keep the row partitioned  in the originating region.  This will give us the best of both worlds.  Fast reads and fast writes within a region..
@@ -150,15 +154,13 @@ alter table dad.jokes set locality regional by row;
 Let's try our writes again.  This time let's do this in US East:
 
 ```sql
-insert into dad.jokes (id,joke,punchline)
-values (1,'Guess What?','Thats What!');
+insert into dad.jokes (id,joke,punchline) values (1,'Guess What?','Thats What!');
 ```
 
 And this one in Europe
 
 ```sql
-insert into dad.jokes (id,joke,punchline)
-values (2,'Hey Mom','Nevermind');
+insert into dad.jokes (id,joke,punchline) values (2,'Hey Mom','Nevermind');
 ```
 
 And let's try the selects as well!  Let's try this in US East:
